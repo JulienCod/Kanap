@@ -66,5 +66,60 @@ function displayArticle(article){
 
 //Gestion du panier
 function addToCart(article) {
-    
+    const btn_envoyerPanier = document.getElementById("addToCart");
+
+    //Ecouter le panier avec 2 conditions couleur non nulle et quantité entre 1 et 100
+    btn_envoyerPanier.addEventListener("click", ()=>{
+        
+        if (quantity.value >= 1 && quantity.value <=100 && COLORS.value != "" ){
+
+            //Recupération du choix de la couleur
+            let choixCouleur = COLORS.value;
+                        
+            //Recupération du choix de la quantité
+            let choixQuantite = quantity.value;
+
+            //Récupération des options de l'article à ajouter au panier
+            let product = {
+                id: id,
+                color: choixCouleur,
+                quantity: choixQuantite,
+                name: article.name,
+                imgUrl: article.imageUrl,
+                altImg: article.altTxt
+            };
+
+            addPanier(product);
+            document.location.href = "cart.html";
+        }else{
+            alert("veuillez sélectionner une couleur et saisir quantitée entre 1 et 100.");
+        }
+    });
+}
+
+// Ajouter un article
+function addPanier(product) {
+    let panier = getPanier();
+    let foundProduct = panier.find(panier => panier.id == product.id && panier.color === product.color);
+    if (foundProduct != undefined){
+        foundProduct.quantity = parseInt(foundProduct.quantity)+ parseInt(product.quantity) ;
+    } else {
+        panier.push(product)
+    }
+    savePanier(panier);
+}
+
+// consulte le local storage existant
+function getPanier() {
+    let panier = localStorage.getItem("panier");
+    if (panier == null) {
+        return [];
+    } else {
+        return JSON.parse(panier);
+    }
+}
+
+// enregistre le contenu dans le localstorage
+function savePanier(article){
+    localStorage.setItem("panier", JSON.stringify(article));
 }
